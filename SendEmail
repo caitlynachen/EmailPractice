@@ -1,0 +1,60 @@
+package jrJava.emailPractice;
+
+import java.util.Properties;
+
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+public class SendEmail {
+	
+	public void sendMail(String from, 
+						String password,
+						String to,
+						String subject,
+						String text){
+		
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.user", from);
+		props.put("mail.smtp.password", password);
+		props.put("mail.smtp.starttls.enable", true);
+		props.put("mail.smtp.port", 587);
+		props.put("mail.smtp.auth", "true");
+		
+		SMTPAuthenticator auth = new SMTPAuthenticator();
+		auth.setInfo(from, password);
+		
+		Session session = Session.getDefaultInstance(props, auth);
+		MimeMessage message = new MimeMessage(session);
+		
+		try{
+			message.addFrom(new Address[]{new InternetAddress(from)}    );
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			message.setSubject(subject);
+			message.setContent(text, "text/html");
+	
+			Transport.send(message);
+			
+			
+		}
+		
+		catch(MessagingException me){
+			me.printStackTrace();
+		}
+
+		
+	}
+
+	
+	public static void main(String[] args) {
+		SendEmail em = new SendEmail();
+		em.sendMail("caitlynachen@gmail.com", "79nmvcait", "elaineTheMistress@gmail.com", 
+					"Hello", " ");
+	}
+
+}
